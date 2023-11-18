@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sunmi/sunmi.dart';
+import 'package:StubSoft/sunmi.dart';
 
 class SunmiScreen extends StatefulWidget {
   const SunmiScreen({Key? key}) : super(key: key);
@@ -30,7 +30,7 @@ class _SunmiScreenState extends State<SunmiScreen> {
             ElevatedButton(
               onPressed: () {
                 Sunmi printer = Sunmi();
-                printer.printReceipt();
+
               },
               child: const Text('Print'),
             ),

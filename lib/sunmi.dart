@@ -4,6 +4,8 @@ import 'package:sunmi_printer_plus/enums.dart';
 import 'package:sunmi_printer_plus/sunmi_printer_plus.dart';
 import 'package:sunmi_printer_plus/sunmi_style.dart';
 
+import 'Models/CartItem.dart';
+
 class Sunmi {
   // initialize sunmi printer
   Future<void> initialize() async {
@@ -90,7 +92,7 @@ class Sunmi {
   }
 
   // print one structure
-  Future<void> printReceipt() async {
+  /*Future<void> printReceipt() async {
     await initialize();
     await printLogoImage();
     await printText("Flutter is awesome");
@@ -99,5 +101,34 @@ class Sunmi {
     await printQRCode("Dart is powerful");
     //await SunmiPrinter.cut();
     await closePrinter();
+  }*/
+  Future<void> printReceipt(List<CartItem> cartItems, double totalPrice) async {
+    await initialize();
+    await printQRCode("StubSoft.com");
+    await printLogoImage();
+    await printText("Nom du Café"); // Remplacez "Nom du Café" par le nom de votre café
+
+    await SunmiPrinter.setAlignment(SunmiPrintAlign.CENTER);
+    await printRowAndColumns(
+      column1: "Désignation",
+      column2: "Prix",
+      column3: "Quantité",
+    );
+
+    // Print each item in the cart as a row
+    for (var item in cartItems) {
+      await printRowAndColumns(
+        column1: item.designation,
+        column2: item.prixVenteTtc.toString(),
+        column3: item.qte.toString(),
+      );
+    }
+
+    // Print total price at the bottom
+    await SunmiPrinter.setAlignment(SunmiPrintAlign.RIGHT);
+    await printText("Total TTC: $totalPrice");
+
+    await closePrinter();
   }
+
 }

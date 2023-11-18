@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:sunmi/sunmi_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'page/homePage.dart';
+import 'page/cartPage.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final routes = {
+    '/home': (context) => HomePage(),
+    '/cartPage': (context) => CartPage(cartItems: [])};
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Sunmi Flutter Demo',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        scaffoldBackgroundColor: Colors.white,
       ),
-      home: SunmiScreen(),
+      home: HomePage(),
+      routes: routes,
     );
   }
 }
