@@ -8,7 +8,7 @@ class GlobalParams{
   String Description_4 ="Semblable à sa sœur le White Knight, le Philodendron White Princess a une tige blanche et verte avec un contour rose.";
   String Description_5="Le Philodendron billietiae variegated a longtemps été considéré comme l’un des Graals du monde des aroïdes.";
   String Description_6="Communément appelé l’anthurium reine, est une espèce de plante du genre Anthurium.";
-  String urlApi ="http://192.168.8.115:7004/api/";
+  String urlApi ="http://192.168.8.104:7004/api/";
 
 
 }

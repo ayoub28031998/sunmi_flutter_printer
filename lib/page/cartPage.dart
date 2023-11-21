@@ -50,40 +50,11 @@ class _CartPageState extends State<CartPage> {
                     child: Dismissible(
                       key: UniqueKey(),
                       confirmDismiss: (direction) async {
-                        return await showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: Text("Confirmer la suppression"),
-                              content: Text("Êtes-vous sûr de vouloir supprimer cet article ?"),
-                              actions: <Widget>[
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop(false); // Annuler la suppression
-                                  },
-                                  child: Text("Annuler"),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop(true); // Confirmer la suppression
-                                  },
-                                  child: Text("Supprimer"),
-                                ),
-                              ],
-                            );
-                          },
-                        );
+                        deleteCartItem(index); // Utilisez la fonction pour confirmer la suppression
                       },
                       onDismissed: (direction) {
-                        // Supprimer l'article si la suppression est confirmée
-                        if (direction == DismissDirection.horizontal) {
-                          setState(() {
-                            widget.cartItems.removeAt(index);
-                          });
-                        }
+                        deleteCartItem(index); // Utilisez la fonction pour supprimer l'article
                       },
-                      direction: DismissDirection.horizontal,
-
                       background: Container(
                         color: Colors.red,
                         alignment: Alignment.centerRight,
@@ -204,14 +175,76 @@ class _CartPageState extends State<CartPage> {
           ),
         ],
       ),
+
+
+
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           GestureDetector(
             onTap: () async {
-              CommandeMobileController commande = CommandeMobileController();
-              commande.postAccompte(widget.cartItems);
-              // Faites quelque chose avec la commande retournée, si nécessaire
+              bool confirmOrder = await showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text("Confirmation Commande"),
+                    content: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+
+                        SizedBox(height: 10),
+                        // Affichage des détails des articles et du prix total
+                        ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: widget.cartItems.length,
+                          itemBuilder: (context, index) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '${widget.cartItems[index].qte} * ${widget.cartItems[index].designation}  -${widget.cartItems[index].prixVenteTtc * widget.cartItems[index].qte} TND',
+                                ),
+                                SizedBox(height: 5),
+                              ],
+                            );
+                          },
+                        ),
+                        SizedBox(height: 10),
+                        Text(
+                          'Prix Total: $totalPrice TND',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(false); // Annuler la commande
+                        },
+                        child: Text("Annuler"),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(true); // Confirmer la commande
+                        },
+                        child: Text("Confirmer"),
+                      ),
+                    ],
+                  );
+                },
+              );
+
+              if (confirmOrder != null && confirmOrder) {
+                CommandeMobileController commande = CommandeMobileController();
+                bool success = await commande.postAccompte(widget.cartItems);
+                if (success) {
+                  setState(() {
+                    widget.cartItems.clear();
+                  });
+                  // Faites quelque chose avec la commande retournée, si nécessaire
+                }
+              }
             },
             child: Container(
               decoration: BoxDecoration(
@@ -249,6 +282,35 @@ class _CartPageState extends State<CartPage> {
 
 
 
+
+    );
+  }
+  void deleteCartItem(int index) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Confirmer la suppression"),
+          content: Text("Êtes-vous sûr de vouloir supprimer cet article ?"),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Ferme la boîte de dialogue
+              },
+              child: Text("Annuler"),
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  widget.cartItems.removeAt(index); // Supprime l'article
+                });
+                Navigator.of(context).pop(); // Ferme la boîte de dialogue
+              },
+              child: Text("Supprimer"),
+            ),
+          ],
+        );
+      },
     );
   }
 }
